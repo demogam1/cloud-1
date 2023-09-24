@@ -1,0 +1,2 @@
+[cloud-1]
+51.158.118.190 ansible_connection=ssh ansible_ssh_user=project-42 ansible_user=project-42 ansible_become_pass=helloworld

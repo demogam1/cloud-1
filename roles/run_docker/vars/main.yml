@@ -1,0 +1,11 @@
+---
+# vars file for test-role-1
+mysql_name: db
+mysql_user: user
+mysql_password: pass
+mysql_root_password: pass
+
+wordpress_host: mysql_db
+wordpress_user: user
+wordpress_password: pass
+wordpress_name: db

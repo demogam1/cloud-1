@@ -1,0 +1,37 @@
+---
+# defaults file for test-role-1
+- name: Start docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  
+- name: Create required directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /home/project-42/data
+    - /home/project-42/data/wordpress
+    - /home/project-42/data/mysql
+    - /home/project-42/data/phpmyadmin
+    - /home/project-42/data/nginx
+    - /home/project-42/app
+
+- name: Generate nginx config
+  template:
+    src: templates/app.conf.jinja2
+    dest: /home/project-42/data/nginx/app.conf
+
+- name: Generate docker-compose.yml
+  template:
+    src: templates/docker-compose.yml.jinja2
+    dest: /home/project-42/app/docker-compose.yml
+
+- name: Generate script docker
+  template:
+    src: templates/init-letsencrypt.py.jinja2
+    dest: /home/project-42/app/init-letsencrypt.py
+
+- name: Run a script using an executable in a system path
+  command: python3 /home/project-42/app/init-letsencrypt.py
