@@ -1,11 +1,13 @@
 import subprocess
 import os
 import sys
+import shutil
 
 # Définit les domaines et autres variables
-domains = ["cloud-22.duckdns.org", "www.cloud-22.duckdns.org"]
+domains = ["cloud-42.duckdns.org"]
 rsa_key_size = 4096
 data_path = "./data/certbot"
+live_path = f"{data_path}/live/cloud-42.duckdns.org"
 email = "haroun_krifa@yahoo.fr"
 staging = 0
 
@@ -16,10 +18,14 @@ def delete_fake_certificate() -> list:
     return ["docker-compose", "run", "--rm", "--entrypoint", f"openssl req -x509 -nodes -newkey rsa:{rsa_key_size} -days 1 -keyout '{path}/privkey.pem' -out '{path}/fullchain.pem' -subj '/CN=localhost'", "certbot"]
 
 def get_letsencrypt_certificate(staging_arg, email_arg, domain_args) -> list:
-    return ["docker-compose", "run", "--rm", "--entrypoint", f"certbot certonly --webroot -w /var/www/certbot {staging_arg} {email_arg} {domain_args} --rsa-key-size {rsa_key_size} --agree-tos --force-renewal", "certbot"]
+    return ["docker-compose", "run", "--rm", "--entrypoint", f"certbot -v certonly --webroot -w /var/www/certbot {staging_arg} {email_arg} {domain_args} --no-eff-email --rsa-key-size {rsa_key_size} --agree-tos --force-renewal", "certbot"]
 #lancer docker compose
 subprocess.run(["docker-compose", "up", "-d", "wordpress","phpmyadmin","mysql_db"])
 
+#Verifier si des certificats existent deja
+if os.path.exists(live_path):
+    subprocess.run(["docker-compose", "up", "-d", "nginx"])
+    sys.exit(0)
 
 # Télécharge les paramètres TLS recommandés s'ils n'existent pas
 conf_path = os.path.join(data_path, "conf")
@@ -44,6 +50,7 @@ subprocess.run(["docker-compose", "up", "--force-recreate", "-d", "nginx"])
 print(f"### Suppression du certificat factice pour {domains} ...")
 delete_cmd = delete_fake_certificate()
 subprocess.run(delete_cmd)
+shutil.rmtree(live_path)
 
 # Demande un certificat Let's Encrypt pour les domaines
 print(f"### Demande de certificat Let's Encrypt pour {domains} ...")

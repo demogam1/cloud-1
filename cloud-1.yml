@@ -6,4 +6,4 @@
     - role: roles/install_docker
     - role: roles/run_docker
   vars_files:
-    - roles/vars/main.yml
+    - roles/run_docker/vars/main.yml
