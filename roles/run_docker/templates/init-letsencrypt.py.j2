@@ -4,10 +4,10 @@ import sys
 import shutil
 
 # Définit les domaines et autres variables
-domains = ["cloud-42.duckdns.org"]
+domains = ["{{ dns_address }}"]
 rsa_key_size = 4096
 data_path = "./data/certbot"
-live_path = f"{data_path}/live/cloud-42.duckdns.org"
+live_path = "/home/project-42/app/data/certbot/conf/live/{{ dns_address }}"
 email = "haroun_krifa@yahoo.fr"
 staging = 0
 

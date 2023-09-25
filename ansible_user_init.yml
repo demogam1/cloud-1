@@ -1,0 +1,6 @@
+---
+- name: Init new ansible user
+  hosts: test
+  remote_user: root
+  roles:
+    - create_ansible_user

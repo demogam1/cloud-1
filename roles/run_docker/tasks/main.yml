@@ -20,18 +20,20 @@
 
 - name: Generate nginx config
   template:
-    src: templates/app.conf.jinja2
+    src: templates/app.conf.j2
     dest: /home/project-42/data/nginx/app.conf
 
 - name: Generate docker-compose.yml
   template:
-    src: templates/docker-compose.yml.jinja2
+    src: templates/docker-compose.yml.j2
     dest: /home/project-42/app/docker-compose.yml
 
 - name: Generate script docker
   template:
-    src: templates/init-letsencrypt.py.jinja2
+    src: templates/init-letsencrypt.py.j2
     dest: /home/project-42/app/init-letsencrypt.py
 
-# - name: Run a script using an executable in a system path
-#   command: python3 /home/project-42/app/init-letsencrypt.py
+- name: Run Python3 script
+  command: python3 /home/project-42/app/init-letsencrypt.py
+  args:
+    chdir: /home/project-42/app

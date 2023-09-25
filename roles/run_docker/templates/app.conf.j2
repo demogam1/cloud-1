@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name cloud-42.duckdns.org;
+    server_name {{ dns_address }};
     server_tokens off;
 
     location /.well-known/acme-challenge/ {
@@ -14,21 +14,21 @@ server {
 
 server {
     listen 443 ssl;
-    server_name cloud-42.duckdns.org;
+    server_name {{ dns_address }};
     server_tokens off;
 
-    ssl_certificate /etc/letsencrypt/live/cloud-42.duckdns.org/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/cloud-42.duckdns.org/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/{{ dns_address }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ dns_address }}/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     # Security headers
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"; #  s'assurer que le contenu est toujours servi en https
-    add_header Content-Security-Policy "default-src 'self'; font-src *;img-src * data:; script-src *; style-src *";
-    add_header X-XSS-Protection "1; mode=block";
-    add_header X-Frame-Options "SAMEORIGIN"; # Protection contre les attaques type clickjacking
-    add_header X-Content-Type-Options nosniff;
-    add_header Referrer-Policy "strict-origin";
+    #add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"; #  s'assurer que le contenu est toujours servi en https
+    #add_header Content-Security-Policy "default-src 'self'; font-src *;img-src * data:; script-src *; style-src *";
+    #add_header X-XSS-Protection "1; mode=block";
+    #add_header X-Frame-Options "SAMEORIGIN"; # Protection contre les attaques type clickjacking
+    #add_header X-Content-Type-Options nosniff;
+    #add_header Referrer-Policy "strict-origin";
 
     location ~ /\.ht {
         deny all;

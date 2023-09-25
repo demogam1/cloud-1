@@ -1,2 +1,4 @@
 [cloud-1]
-51.158.118.190 ansible_connection=ssh ansible_ssh_user=project-42 ansible_user=project-42 ansible_become_pass='{{ become_pass }}'
+51.158.118.190 ansible_connection=ssh ansible_ssh_user=project-42 ansible_user=project-42 ansible_become_pass='{{ become_pass }}' dns_address=cloud-66.duckdns.org
+[test]
+192.168.1.13
