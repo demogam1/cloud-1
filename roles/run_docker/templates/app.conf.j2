@@ -22,15 +22,28 @@ server {
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
+    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"; #  s'assurer que le contenu est toujours servi en https
+    add_header Content-Security-Policy "default-src 'self'; font-src *;img-src * data:; script-src *; style-src *";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Frame-Options "SAMEORIGIN"; # Protection contre les attaques type clickjacking
+    add_header X-Content-Type-Options nosniff;
+    add_header Referrer-Policy "strict-origin";
+
+    location ~ /\.ht {
+        deny all;
+    }
+
     location / {
         proxy_pass  http://wordpress;
         proxy_set_header    Host                $http_host;
         proxy_set_header    X-Real-IP           $remote_addr;
         proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
+        proxy_set_header    X-Forwarded-Proto   $scheme;
     }
 
-    location ^~ /phpmyadmin/ { # ^~ pour url statique
-            rewrite ^/phpmyadmin(/.*)$ $1 break;
+    location ~ \/pma { 
+            rewrite ^/pma(/.*)$ $1 break;
             proxy_pass http://phpmyadmin;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;

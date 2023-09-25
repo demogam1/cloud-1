@@ -44,6 +44,7 @@ services:
     environment:
       PMA_HOST: mysql_db
       MYSQL_ROOT_PASSWORD: {{ phpmyadmin_root_password }}
+      MA_ABSOLUTE_URI: https://cloud-42.duckdns.org/pma/
     volumes:
       - phpmyadmin-volume:/var/www/html/phpmyadmin
     networks:
