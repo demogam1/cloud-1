@@ -37,3 +37,8 @@
   command: python3 /home/project-42/app/init-letsencrypt.py
   args:
     chdir: /home/project-42/app
+
+- name: Copy wp_config
+  template:
+    src: templates/wp-config.php.j2
+    dest: /home/project-42/data/wordpress/wp-config.php 
