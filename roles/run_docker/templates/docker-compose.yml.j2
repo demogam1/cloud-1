@@ -6,15 +6,18 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
-      MYSQL_PASSWORD: {{ mysql_password }}
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
     volumes:
       - mysql-volume:/var/lib/mysql
     networks:
       - cloud_network
-  
+    secrets:
+      - mysql_password
+      - mysql_root_password
+      
   wordpress:
     depends_on:
       - mysql_db
@@ -26,12 +29,14 @@ services:
     environment:
       WORDPRESS_DB_HOST: mysql_db
       WORDPRESS_DB_USER: {{ mysql_user }}
-      WORDPRESS_DB_PASSWORD: {{ mysql_password }}
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/mysql_password
       WORDPRESS_DB_NAME: {{ wordpress_db_name }}
     volumes:
       - wordpress-volume:/var/www/html
     networks:
       - cloud_network
+    secrets:
+      - mysql_password
   
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -43,12 +48,15 @@ services:
      - 3333:80
     environment:
       PMA_HOST: mysql_db
-      MYSQL_ROOT_PASSWORD: {{ phpmyadmin_root_password }}
+      MYSQL_ROOT_PASSWORD: /run/secrets/phpmyadmin_root_password
       PMA_ABSOLUTE_URI: https://{{ dns_address }}/pma/
     volumes:
       - phpmyadmin-volume:/var/www/html/phpmyadmin
     networks:
       - cloud_network
+    secrets:
+      - phpmyadmin_root_password
+
    
   nginx:
     image: nginx:1.15-alpine
@@ -76,6 +84,14 @@ services:
     networks:
       - cloud_network
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+secrets:
+  mysql_password:
+    external: true
+  mysql_root_password:
+    external: true
+  phpmyadmin_root_password:
+    external: true
 
 volumes:
   wordpress-volume:

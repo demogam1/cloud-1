@@ -33,6 +33,12 @@
     src: templates/init-letsencrypt.py.j2
     dest: /home/project-42/app/init-letsencrypt.py
 
+- name: Execute the command in remote shell; stdout goes to the specified file on the remote
+  ansible.builtin.shell: 
+    - printf "{{ mysql_password }}" | docker secret create mysql_password - #Pour le wordpress_db_pass et mysql_password
+    - printf "{{ mysql_root_password }}" | docker secret create mysql_root_password - #Pour mysql_root_password
+    - printf "{{ phpmyadmin_root_password }}" | docker secret create phpmyadmin_root_password - #Pour phpmyadmin_root_password
+    
 - name: Run Python3 script
   command: python3 /home/project-42/app/init-letsencrypt.py
   args:
