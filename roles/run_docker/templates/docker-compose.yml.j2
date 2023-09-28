@@ -21,8 +21,6 @@ services:
     container_name: wordpress
     image: wordpress:latest
     restart: always
-    ports:
-      - "8000:80"
     environment:
       WORDPRESS_DB_HOST: mysql_db
       WORDPRESS_DB_USER: {{ mysql_user }}
@@ -39,8 +37,6 @@ services:
     depends_on:
       - mysql_db
     restart: always
-    ports:
-     - 3333:80
     environment:
       PMA_HOST: mysql_db
       MYSQL_ROOT_PASSWORD: {{ phpmyadmin_root_password }}
