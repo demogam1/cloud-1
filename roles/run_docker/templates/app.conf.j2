@@ -42,8 +42,8 @@ server {
         proxy_set_header    X-Forwarded-Proto   $scheme;
     }
 
-    location ~ \/pma { 
-            rewrite ^/pma(/.*)$ $1 break;
+    location ~ \/phpmyadmin { 
+            rewrite ^/phpmyadmin(/.*)$ $1 break;
             proxy_pass http://phpmyadmin;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
