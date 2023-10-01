@@ -1,5 +1,6 @@
 server {
     listen 80;
+    listen [::]:80;
     server_name {{ dns_address }};
     server_tokens off;
 
@@ -14,6 +15,7 @@ server {
 
 server {
     listen 443 ssl;
+    listen [::]:443 ssl;
     server_name {{ dns_address }};
     server_tokens off;
 
@@ -43,6 +45,8 @@ server {
     }
 
     location ~ \/phpmyadmin { 
+            allow 88.168.133.69;
+            deny all;
             rewrite ^/phpmyadmin(/.*)$ $1 break;
             proxy_pass http://phpmyadmin;
             proxy_set_header Host $host;

@@ -2,8 +2,19 @@
 # tasks file for create_ansible_user
   - include_vars: ansible_users.yml
 
-  - name: Create users with home directory
-    user: name={{ item.username }} shell=/bin/bash createhome=yes comment='Created by Ansible'
+  - name: Create a login user
+    user:
+      name: '{{ item.username }}'
+      password: '{{ item.password }}'
+      groups: # Empty by default, here we give it some groups
+        - sudo
+      state: present
+      append: yes
+      shell: /bin/bash       # Defaults to /bin/bash
+      system: no             # Defaults to no
+      createhome: yes        # Defaults to yes
+      home: /home/{{ item.username }}  # Defaults to /home/<username>
+      state: present
     with_items: '{{users}}'
 
   - name: Setup | authorized key upload
@@ -12,11 +23,14 @@
     when: "{{ item.use_sudo }} == True"
     with_items: '{{users}}'
 
-  - name: Sudoers | update sudoers file and validate
-    lineinfile: "dest=/etc/sudoers
-      insertafter=EOF
-      line='{{ item.username }} ALL=(ALL)'
-      regexp='^{{ item.username }} .*'
-      state=present"
-    when: '{{ item.use_sudo }} == True'
-    with_items: '{{users}}'
+  # - name: Add user-specific sudoers file under /etc/sudoers.d/
+  #   lineinfile:
+  #     path: "/etc/sudoers.d/{{ item.username }}"
+  #     create: yes
+  #     line: "{{ item.username }} ALL=(ALL:ALL) ALL"
+  #     regexp: "^{{ item.username }} .*"
+  #     state: present
+  #     validate: 'visudo -cf %s'
+  #   when: item.use_sudo | bool
+  #   with_items: "{{ users }}"
+  #   become: yes
